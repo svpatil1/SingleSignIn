@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.ui.Model;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 import com.singlesignin.command.LoginCommand;
 import com.singlesignin.command.UserCommand;
-import com.singlesignin.dao.BaseDAO;
 import com.singlesignin.domain.User;
 import com.singlesignin.exception.UserBlockedException;
 import com.singlesignin.service.UserService;
@@ -32,7 +32,7 @@ import com.singlesignin.sqlscript.runSqlScript;
  */
 
 @RestController
-public class UserController{
+public class UserController {
 	
 	@Autowired
 	private UserService userService;  // userService is injected in UserController
@@ -41,6 +41,12 @@ public class UserController{
 	public ModelAndView dashboard(Model m) {
 		ModelAndView mav = new ModelAndView("/index");
 		return mav;
+	}
+	
+	@RequestMapping(value = {"/get_login"}, method = RequestMethod.GET)
+	public ModelAndView index(ModelMap m) {
+		m.addAttribute("command", new LoginCommand());
+		return new ModelAndView("redirect:index_login",m);
 	}
 	
 	@RequestMapping(value = {"/index_login"}, method = RequestMethod.GET)
