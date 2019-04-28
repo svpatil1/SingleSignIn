@@ -5,7 +5,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.SQLException;
-
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -128,6 +126,17 @@ public class UserController {
 	@RequestMapping(value = "/register", method = RequestMethod.POST)
 	public ModelAndView registerUser(@ModelAttribute("command") User user, Model m) {
 		try {	
+			
+			/*
+			 * Check if the user has selected the role before registering. If not then throw error
+			 */
+			
+			if(user.getRole() == null) {
+				m.addAttribute("err", "Select correct role.");
+				ModelAndView mav = new ModelAndView("/reg_form");
+				return mav;
+			}
+			else {
 			/*
 			 * Check the length of password used for registration, to have proper encryption.
 			 * After successful registration, the user is redirected to login.
@@ -149,6 +158,7 @@ public class UserController {
         		userService.register(user);}
 				ModelAndView mav = new ModelAndView("redirect:index_login?act=reg");
 				return mav;
+			}
 		}catch(DuplicateKeyException e) {
 			e.printStackTrace();
 			m.addAttribute("err", "Username already exist. Please select different username."); // it takes care that the username is unique.
