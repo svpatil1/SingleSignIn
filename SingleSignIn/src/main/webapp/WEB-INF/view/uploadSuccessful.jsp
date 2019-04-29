@@ -46,8 +46,7 @@ li a:hover {
   <li><a class="active" href="index">Back</a></li>
 </ul>
 	
-  		<h2> <center> Uploaded Sucessfully</center></h2>
-  		<h2> <center> Wait for admin's approval to get deployed on the server. </center></h2>
+  		<h2> <center> Application Uploaded Sucessfully</center></h2>
 		<center><img src="resources/img/thumbs-up.png" class="w3-round"></center>
 	
 </body>

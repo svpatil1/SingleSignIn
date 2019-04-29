@@ -1,10 +1,6 @@
 package com.singlesignin.controller;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.sql.SQLException;
+
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -13,16 +9,15 @@ import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
+import com.dashboard.domain.Peanut_account;
+import com.dashboard.service.Peanut_accountService;
 import com.singlesignin.command.LoginCommand;
 import com.singlesignin.command.UserCommand;
 import com.singlesignin.domain.User;
 import com.singlesignin.exception.UserBlockedException;
 import com.singlesignin.service.UserService;
-import com.singlesignin.sqlscript.runSqlScript;
 
 /**
  * This class provides mapping to HTTP requests.
@@ -34,6 +29,8 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;  // userService is injected in UserController
+	@Autowired 
+	private Peanut_accountService peanut_accountService;
 	
 	@RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
 	public ModelAndView dashboard(Model m) {
@@ -137,28 +134,36 @@ public class UserController {
 				return mav;
 			}
 			else {
-			/*
-			 * Check the length of password used for registration, to have proper encryption.
-			 * After successful registration, the user is redirected to login.
-			 */
-			
-			if(user.getPassword().length()<8) {
-				m.addAttribute("err", "Registration Failed! Enter password with 8 characters");
-				ModelAndView mav = new ModelAndView("/reg_form");
-				return mav;
-        	}
-        	else if(user.getPassword().length()>8) {
-        		m.addAttribute("err", "Registration Failed! Enter password with 8 characters");
-        		ModelAndView mav = new ModelAndView("/reg_form");
-        		return mav;
-        	}
-        	else {	
-        		user.setLoginStatus(userService.LOGIN_STATUS_ACTIVE);
-        		//System.out.println(user.getLoginName());
-        		userService.register(user);}
+				
+				/*
+				 * Check the length of password used for registration, to have proper encryption.
+				 * After successful registration, the user is redirected to login.
+				 */
+				
+				if(user.getPassword().length()<8) {
+					m.addAttribute("err", "Registration Failed! Enter password with 8 characters");
+					ModelAndView mav = new ModelAndView("/reg_form");
+					return mav;
+				}
+				else if(user.getPassword().length()>8) {
+					m.addAttribute("err", "Registration Failed! Enter password with 8 characters");
+					ModelAndView mav = new ModelAndView("/reg_form");
+					return mav;
+				}
+				else {	
+					user.setLoginStatus(userService.LOGIN_STATUS_ACTIVE);
+					//System.out.println(user.getLoginName());
+					userService.register(user);
+					Peanut_account p = null;
+					try {
+						peanut_accountService.createAccount(p, user.getUserId());
+					} catch (Exception e) {
+						m.addAttribute("err", "Peanut account not created!.");
+					}
+				}
+			}
 				ModelAndView mav = new ModelAndView("redirect:index_login?act=reg");
 				return mav;
-			}
 		}catch(DuplicateKeyException e) {
 			e.printStackTrace();
 			m.addAttribute("err", "Username already exist. Please select different username."); // it takes care that the username is unique.
@@ -168,79 +173,4 @@ public class UserController {
 			
 	}
 	
-	@RequestMapping(value = "/upload", method = RequestMethod.GET)
-	public ModelAndView upload(Model m) {
-		ModelAndView mav = new ModelAndView("/upload");
-		return mav;
-	}
-	
-	/*
-	 * uploadFiles() method is called when users(ISV and ADMIN) are uploading the file on server.
-	 * It firstly stores the file temporarily.
-	 */
-	
-	@RequestMapping(value = "/uploadSuccessful", method = RequestMethod.GET)
-	public ModelAndView uploadSucess(Model m) {
-		ModelAndView mav = new ModelAndView("/uploadSuccessful");
-		return mav;
-	}
-	
-	@RequestMapping(value = "/uploadFailed", method = RequestMethod.GET)
-	public ModelAndView uploadFail(Model m) {
-		ModelAndView mav = new ModelAndView("/uploadFailed");
-		return mav;
-	}
-	
-	@RequestMapping(value = "/uploadFiles", method = RequestMethod.POST)
-	public ModelAndView uploadFiles(@RequestParam("file") MultipartFile[] files) throws IOException, SQLException
-	{
-
-		for (int i = 0; i < files.length; i++) {
-			MultipartFile file = files[i];
-			System.out.println("Original file name: "+ file.getOriginalFilename());
-			System.out.println(file);
-	
-			try {
-				
-				byte[] bytes = file.getBytes();
-
-				// Creating the directory to store file
-				String rootPath = System.getProperty("catalina.base");
-				System.out.println(rootPath);
-				File dir = new File(rootPath + File.separator + "tmpFiles");
-				System.out.println(dir);
-				if (!dir.exists()) { // check if directory already exist
-					dir.mkdirs();
-					System.out.println("Directory has been created successfully");
-				}
-
-				// Create the file on server
-				File TempServerFile = new File(dir.getAbsolutePath()
-						+ File.separator + file.getOriginalFilename());
-				System.out.println("Temp server file: "+ TempServerFile );
-				String scriptPath = TempServerFile.toString();
-				
-				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(TempServerFile));
-				bos.write(bytes);
-				bos.close();
-				/*
-				 * If the file is an sql script then run and delete it from the directory to save memory.
-				 */
-				if(scriptPath.endsWith(".sql")) {
-					runSqlScript test = new runSqlScript();
-					test.run(scriptPath);
-					TempServerFile.delete();
-				}
-				
-			} catch (Exception e) {
-				ModelAndView mav = new ModelAndView("redirect:uploadFailed");
-				return mav;
-			}
-		}
-		ModelAndView mav = new ModelAndView("redirect:uploadSuccessful");
-		return mav;
-		
-	}
-
-
 }
