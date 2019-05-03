@@ -33,7 +33,12 @@ public class UserController {
 	private Peanut_accountService peanut_accountService;
 	
 	@RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
-	public ModelAndView dashboard(Model m) {
+	public ModelAndView dashboard(ModelMap m) {
+		return new ModelAndView("redirect:dashboard",m);
+	}
+	
+	@RequestMapping(value = {"/dashboard"}, method = RequestMethod.GET)
+	public ModelAndView getDashboard(Model m) {
 		ModelAndView mav = new ModelAndView("/index");
 		return mav;
 	}

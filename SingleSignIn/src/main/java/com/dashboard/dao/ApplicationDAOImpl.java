@@ -16,15 +16,22 @@ public class ApplicationDAOImpl extends BaseDAO implements ApplicationDAO {
 
 	@Override
 	public Application save(Application a) {
+		
 		String name = a.getName();
 		Integer userId = a.getUserId();
-		String sql = "INSERT INTO application(name, userId)"
-                + " VALUES(:name, :userId)";
+		String imageLocation = a.getImageLocation();
+		String appDescription = a.getAppDesc();
+		
+		String sql = "INSERT INTO application(name, userId, imageLocation, appDescription)"
+                + " VALUES(:name, :userId, :imageLocation, :appDescription)";
+		
 		Map m = new HashMap();
 		m.put("name", name);
-		m.put("userId", userId);		
+		m.put("userId", userId);
+		m.put("imageLocation", imageLocation);
+		m.put("appDescription", appDescription);
 			
-		 KeyHolder kh = new GeneratedKeyHolder();
+		 	KeyHolder kh = new GeneratedKeyHolder();
 	        SqlParameterSource ps = new MapSqlParameterSource(m);
 	        super.getNamedParameterJdbcTemplate().update(sql, ps, kh);
 	        Integer app_id = kh.getKey().intValue();
