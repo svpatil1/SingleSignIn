@@ -33,6 +33,12 @@ public class ApplicationController {
 	@Autowired
 	private ApplicationService applicationService;
 
+	@RequestMapping(value = "/about", method = RequestMethod.GET)
+	public ModelAndView about() {
+		ModelAndView mav = new ModelAndView("/about");
+		return mav;
+	}
+	
 	@RequestMapping(value = "/upload", method = RequestMethod.GET)
 	public ModelAndView upload(Model m) {
 		m.addAttribute("command", new applicationCommand());
@@ -60,59 +66,119 @@ public class ApplicationController {
 	@RequestMapping(value = "/uploadFiles", method = RequestMethod.POST)
 	public ModelAndView uploadFiles(@ModelAttribute("command") applicationCommand cmd, Model m,  HttpSession session, @RequestParam("file") MultipartFile[] files) throws IOException, SQLException
 	{	
-		//Registering a new application in database, after uploading
-		Application a = new Application();
-		a.setName(cmd.getName());
-		a.setUserId((Integer) session.getAttribute("userId"));
-		Application newApp = applicationService.registerApplication(a);
-
-		
-		for (int i = 0; i < files.length; i++) {
-			MultipartFile file = files[i];
-			System.out.println("Original file name: "+ file.getOriginalFilename());
-			System.out.println(file);
+		if(cmd.getAppDescription().isEmpty()) {
+			m.addAttribute("err", "Application Description or Application name cannot be empty"); // it takes care that the app description is not empty
+			ModelAndView mav = new ModelAndView("/upload");
+			return mav;
 			
-	
-			try {
-				
-				byte[] bytes = file.getBytes();
-
-				// Creating the directory to store file
-				String rootPath = System.getProperty("catalina.base");
-				System.out.println(rootPath);
-				File dir = new File(rootPath + File.separator + "tmpFiles");
-				System.out.println(dir);
-				if (!dir.exists()) { // check if directory already exist
-					dir.mkdirs();
-					System.out.println("Directory has been created successfully");
-				}
-
-				// Create the file on server
-				File TempServerFile = new File(dir.getAbsolutePath()
-						+ File.separator + file.getOriginalFilename());
-				System.out.println("Temp server file: "+ TempServerFile );
-				String scriptPath = TempServerFile.toString();
-				
-				BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(TempServerFile));
-				bos.write(bytes);
-				bos.close();
-				/*
-				 * If the file is an sql script then run and delete it from the directory to save memory.
-				 */
-				if(scriptPath.endsWith(".sql")) {
-					runSqlScript test = new runSqlScript();
-					test.run(scriptPath);
-					TempServerFile.delete();
-				}
-				
-				
-			} catch (Exception e) {
-				ModelAndView mav = new ModelAndView("redirect:uploadFailed");
-				return mav;
-			}
 		}
-		ModelAndView mav = new ModelAndView("redirect:uploadSuccessful");
-		return mav;
+		else if(cmd.getName().isEmpty()) {
+			m.addAttribute("err", "Application Description or Application name cannot be empty"); // it takes care that the app description is not empty
+			ModelAndView mav = new ModelAndView("/upload");
+			return mav;
+			
+		}
+				
+		else {
+			if((files[0].getOriginalFilename().endsWith(".war")) && (files[1].getOriginalFilename().endsWith(".sql"))) {
+					
+			for (int i = 0; i < files.length; i++) {
+				MultipartFile file = files[i];
+				System.out.println("Original file name: "+ file.getOriginalFilename());
+				System.out.println(file);
+				
 		
+				try {
+					
+					byte[] bytes = file.getBytes();
+	
+					// Creating the directory to store file
+					String rootPath = System.getProperty("catalina.base");
+					System.out.println(rootPath);
+					
+					File dirSql = new File(rootPath + File.separator + "tmpFiles");
+					File dirWar = new File(rootPath + File.separator + "warFiles");
+					
+					System.out.println("Sql directory"+dirSql);
+					System.out.println("War directory"+dirWar);
+					
+	
+					// Create temporary sql file on server
+					if((file.getOriginalFilename().endsWith(".sql"))){
+						
+						if (!dirSql.exists()) { // check if directory already exist
+							dirSql.mkdirs();
+							System.out.println("SQL Directory has been created successfully");
+						}
+						
+						File TempServerFile = new File(dirSql.getAbsolutePath()
+								+ File.separator + file.getOriginalFilename());
+						System.out.println("SQL Temp server file: "+ TempServerFile );
+						String scriptPathSql = TempServerFile.toString();
+						
+						BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(TempServerFile));
+						bos.write(bytes);
+						bos.close();
+						
+						/*
+						 * If the file is an sql script then run and delete it from the directory to save memory.
+						 */
+						
+						runSqlScript test = new runSqlScript();
+						test.run(scriptPathSql);
+						TempServerFile.delete();
+					}
+					else {
+
+						//Registering a new application in database, after uploading
+						Application a = new Application();
+						try {
+						a.setName(cmd.getName());
+						a.setUserId((Integer) session.getAttribute("userId"));
+						a.setAppDesc(cmd.getAppDescription());
+						
+						String iconName = cmd.getName() + ".png";
+						String iconPath = "resources/img/" + iconName;
+						a.setImageLocation(iconPath);
+						System.out.println(a.toString());
+						applicationService.registerApplication(a);
+						}catch (Exception e){
+							m.addAttribute("err", "The Application with same name already exist"); // it takes care that the app description is not empty
+							ModelAndView mav = new ModelAndView("/upload");
+							return mav;
+						}
+						
+						if (!dirWar.exists()) { // check if directory already exist
+							dirWar.mkdirs();
+							System.out.println("War Directory has been created successfully");
+						}
+						
+						File TempServerFileWar = new File(dirWar.getAbsolutePath()
+								+ File.separator + file.getOriginalFilename());
+						System.out.println("War Temp server file: "+ TempServerFileWar );						
+						BufferedOutputStream bosWar = new BufferedOutputStream(new FileOutputStream(TempServerFileWar));
+						bosWar.write(bytes);
+						bosWar.close();
+						
+						
+						
+					}	
+					}
+				
+				catch (Exception e) {
+					ModelAndView mav = new ModelAndView("redirect:uploadFailed");
+					return mav;
+				}
+			}
+			
+}else {
+	m.addAttribute("err", "Select correct files.");
+	ModelAndView mav = new ModelAndView("/upload");
+	return mav;
+		}
+			ModelAndView mav = new ModelAndView("redirect:uploadSuccessful");
+			return mav;
+		
+		}
 	}
 }

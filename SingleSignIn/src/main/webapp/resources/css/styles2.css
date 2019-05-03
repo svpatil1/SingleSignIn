@@ -22,12 +22,25 @@ color: #123456; /* hexadecimal */
 }
 
 .toptab {
-	margin-top:0px;
-  background-color: #353535 ; 
-  overflow: hidden;
-  position: fixed;
-  top:0;
-  width: 100%;
+	margin-top:0px;	
+	  background-color: #353535 ; 
+	  overflow: hidden;
+	  position: absolute;
+	  top:0;
+	  width: 100%;
+}
+
+.heading {
+	
+    
+    text-decoration: none;
+    font-size: 15px;
+    padding: 10px 10px;
+    top:0;
+    width: 100%;
+}
+.heading p {
+	font-size: 20px;
 }
 
 /* Style the links inside the navigation bar */
@@ -52,20 +65,18 @@ color: #123456; /* hexadecimal */
   color: black;
 }
 
-table, th, td {
-  border: 2px solid black;
-  text-align: center;
-  height: 50px;
-  border-collapse: collapse;
-}
-
-#table2{
+/* #table2{
   
   text-align: center;
-  margin-top:100px;
-  border-collapse: collapse;
+  margin-top:500px;
+  border-collapse: separate;
+  border-spacing: 115px 50px;
+   
+} */
+#table2 {
+  border-collapse: separate;
+  border-spacing: 15px 50px;
 }
-
 #form1m{
   background-color: #B9B9CD;
   
@@ -87,9 +98,10 @@ table, th, td {
 .btnn{
 	height: 200px;
 	width: 400px;
-	background-color:#f9f2f7   ;
+	background-color: #a9d2ae   ;
 	font-size : 20px;
 	font-weight: bold;
+	border: 2px;
 	color:black;
 
 }
@@ -148,9 +160,5 @@ table, th, td {
 .dropdown2:hover .dropdown2-content {
   display: block;
 }
-
-
-
-
 
 

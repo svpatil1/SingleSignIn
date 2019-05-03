@@ -18,7 +18,7 @@ form{
   max-width:510px;
   margin: 0 auto;
   margin-top: 100px;
-  height: 300px;
+  height: 400px;
 }
 div{
   max-width:500px; 
@@ -72,6 +72,11 @@ li a:hover {
 	<div class="w3-row w3-section">		
        	<div class="w3-rest">
       		Application Name: <f:input path="name" class="w3-input w3-border" name="name" type="text" placeholder="Enter your Application Name" />
+    	</div>
+	</div>
+	<div class="w3-row w3-section">		
+       	<div class="w3-rest">
+      		Application Description: <f:input path="appDescription" class="w3-input w3-border" name="description" type="text" placeholder="Enter Description for your Application" />
     	</div>
 	</div>
     <div class="w3-rest" >	
