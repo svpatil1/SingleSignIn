@@ -1,5 +1,11 @@
 package com.dashboard.command;
 
+/**
+ * 
+ * @author sanika
+ * This class will set and get the application information from database
+ */
+
 public class applicationCommand {
 
 	private String name;

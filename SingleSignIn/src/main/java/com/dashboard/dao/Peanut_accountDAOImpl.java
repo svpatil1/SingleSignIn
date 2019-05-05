@@ -15,6 +15,9 @@ public class Peanut_accountDAOImpl extends BaseDAO implements Peanut_accountDAO 
 
 	@Override
 	public Peanut_account save(Peanut_account p, Object attribute) {
+		/**
+		 *   This will save the peanut account information of the user in database
+		 */
 		String sql = "INSERT INTO peanut_account(available_peanuts, userId)"
                 + " VALUES(:available_peanuts, :userId)";
 		Integer def = 1000;

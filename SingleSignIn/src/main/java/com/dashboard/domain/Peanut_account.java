@@ -1,5 +1,11 @@
 package com.dashboard.domain;
 
+/**
+ * 
+ * @author sanika
+ * This will craete Peanut_account object
+ */
+
 public class Peanut_account {
 
 	

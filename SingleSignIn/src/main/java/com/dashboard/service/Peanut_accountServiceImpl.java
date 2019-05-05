@@ -8,8 +8,8 @@ import com.dashboard.domain.Peanut_account;
 import com.singlesignin.dao.BaseDAO;
 
 /**
- * @author vijetaagrawal
- *
+ * @author Sanika Patil
+ * This class provides service implementation to create the peanut_account.
  */
 
 @Service

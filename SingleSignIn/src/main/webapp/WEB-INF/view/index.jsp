@@ -103,6 +103,7 @@ sessionID=(Integer)session.getAttribute("sessionID");
 	%>
   	<a href="http://143.167.9.201:8080/PaymentMicroservice/getViewAccount?userID=<%=userID %>&sessionID=<%=sessionID%>">Peanut Account</a>
   	<a href="upload">Upload</a>
+  	<a href="http://143.167.9.201:8080/PaymentMicroservice/viewAllTransactions">View All Transactions</a>
   	<a href="logout">Logout</a>
   	<a href="about">About Us</a>
   	
