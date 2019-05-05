@@ -23,10 +23,10 @@ public class runSqlScript {
 		try {
 			
 			// load driver class for mysql
-			Class.forName("com.mysql.jdbc.Driver");
+			Class.forName("com.mysql.cj.jdbc.Driver");
 			// create connection
 			connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/", 
-	                            "root", "sqlpass1");
+	                            "root", "svds2019");
 			
 			// create ScripRunner object
 			ScriptRunner scriptExe = new ScriptRunner(connection, false, false); //public ScriptRunner(java.sql.Connection connection,boolean autoCommit,boolean stopOnError)

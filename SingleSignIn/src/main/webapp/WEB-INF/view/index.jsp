@@ -44,24 +44,35 @@ html, body {
 </style>
 </head>
 
-<body>
+<body >
 	<sql:setDataSource
         var="myDB"
         driver="com.mysql.cj.jdbc.Driver"
-        url="jdbc:mysql://localhost:3306/Login and Payment"
-        user="root" password="sqlpass1"
+        url="jdbc:mysql://localhost:3306/Microservice"
+        user="root" password="svds2019"
     />
      
     <sql:query var="listApp"   dataSource="${myDB}">
         SELECT * FROM application;
     </sql:query>
+    
+<%
+String username=(String)session.getAttribute("loginName");
+int userID=0;		        
+int sessionID=0;
+if(username != null){
+userID=(Integer)session.getAttribute("userId");				        
+sessionID=(Integer)session.getAttribute("sessionID");
+}
+%>
 
- <div class="toptab">
+ <div class="toptab" style="overflow-x:auto:">
  	
  	<a class="active" href="index">DashBoard</a>
  	<%
-	String username=(String)session.getAttribute("loginName");
+	String loginName=(String)session.getAttribute("loginName");
 	String role=(String)session.getAttribute("role");
+	Integer userId=(Integer)session.getAttribute("userId");
 	System.out.println("role is:" +role);
 	if(role==null){
 	%>
@@ -73,7 +84,7 @@ html, body {
 	else{			        
 	if(role.equals("ROLE_USER")){
 	%> 
-  	<a href="/PaymentMicroservice/getViewAccount">Peanut Account</a>
+  	<a href="http://143.167.9.201:8080/PaymentMicroservice/getViewAccount?userID=<%=userID %>&sessionID=<%=sessionID%>">Peanut Account</a>
   	<a href="logout">Logout</a>
   	<a href="about">About Us</a>
 							 
@@ -81,7 +92,7 @@ html, body {
 	}
 	else if(role.equals("ROLE_ISV")){
 	%>
-  	<a href="/PaymentMicroservice/getViewAccount">Peanut Account</a>
+  	<a href="http://143.167.9.201:8080/PaymentMicroservice/getViewAccount?userID=<%=userID %>&sessionID=<%=sessionID%>">Peanut Account</a>
 	<a href="upload">Upload</a>
 	<a href="logout">Logout</a>
 	<a href="about">About Us</a>
@@ -90,7 +101,7 @@ html, body {
 	}
 	else if(role.equals("ROLE_ADMIN")){
 	%>
-  	<a href="/PaymentMicroservice/getViewAccount">Peanut Account</a>
+  	<a href="http://143.167.9.201:8080/PaymentMicroservice/getViewAccount?userID=<%=userID %>&sessionID=<%=sessionID%>">Peanut Account</a>
   	<a href="upload">Upload</a>
   	<a href="logout">Logout</a>
   	<a href="about">About Us</a>
@@ -101,11 +112,11 @@ html, body {
 %>	
 </div>	
 
-<div>
+<div style="overflow-x:auto:">
 	<img class="one" src="resources/img/academia.png" height=400" width="100">
 </div>
 
-<div class="heading" align="center">
+<div style="overflow-x:auto:" class="heading" align="center">
 	<h1>WELCOME TO SHEFFIELD CLOUDBASE</h1>
 	<p>The platform is all about Academia theme. The applications hosted on the platform will help students with there academic life.</p>
 	<p>It facilitates ISVs to upload their applications centered around academic theme. Before registering, you can hover over the </p>
@@ -113,8 +124,8 @@ html, body {
 	<p>For each application usage, the user will be charged 5 peanuts.</p>
 </div>
 
-<div class= "appTray" style="overflow-x:auto;" align="center">
-<table id="table2" align="center">
+<div style="overflow-x:auto;">
+<table id="table2" align="center" style="overflow-x:auto;">
 
 	<c:if test="${sessionScope.userId == null}"> 
 	<tr>
@@ -134,10 +145,10 @@ html, body {
 	<c:if test="${sessionScope.userId != null}"> 
 		<tr>
 		<c:forEach var="app" items="${listApp.rows}">
-  			
+		
   			<th>
-	  			<a href="/PaymentMicroservice/getCheckout?/${app.name}">
-	  			<button class="btnn" title="${app.appDescription}" ><img src="${app.imageLocation}" border = "1" width="100px" height="100px">${app.name}</button>
+	  			<a href="http://143.167.9.201:8080/PaymentMicroservice/getCheckout?userID=<%=userID %>&sessionID=<%=sessionID%>&appName=${app.name}">
+	  			<button name="${app.name}" class="btnn" title="${app.appDescription}" ><img src="${app.imageLocation}" border = "1" width="100px" height="100px">${app.name}</button>
 				</a>
 			</th>
     		

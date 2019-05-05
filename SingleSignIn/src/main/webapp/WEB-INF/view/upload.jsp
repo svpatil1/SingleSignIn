@@ -15,11 +15,21 @@
 <style>
 
 form{
-  max-width:510px;
+  max-width:600px;
   margin: 0 auto;
   margin-top: 100px;
-  height: 400px;
+  height: 450px;
 }
+
+div.note{
+  max-width:500px; 
+  max-width:510px;
+  margin: 0 auto;
+  margin-top: 10px;
+  height: 120px;
+  margin-bottom: 20px;
+}
+
 div{
   max-width:500px; 
 }
@@ -58,9 +68,19 @@ li a:hover {
 </head>
 
 <body>
+
 <ul>
   <li><a class="active" href="index">Back</a></li>
 </ul>
+
+<div class="note">
+<h2 align="center">NOTE</h2>
+<p>Kindly make a note before uploading your application, that the application name and its icon name(.png) must be same. Also, you need to include some files in your application. </p>
+<p>You can download that files from the below link.</p>
+<a align="center" href="instructions">Click Here</a>
+</div>
+
+
 <f:form action="uploadFiles" modelAttribute="command" class="w3-container w3-card-4 w3-light-grey w3-text-pink" enctype="multipart/form-data" method="POST">
 
 	<div class="w3-center">
@@ -82,6 +102,7 @@ li a:hover {
     <div class="w3-rest" >	
       	WAR file to upload: <input type="file" name="file" />
       	SQL file to upload: <input type="file" name="file" />
+      	Icon Image to upload: <input type="file" name="file" />
     </div>
 
 

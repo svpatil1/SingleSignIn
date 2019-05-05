@@ -1,6 +1,10 @@
 package com.singlesignin.controller;
 
 
+import java.io.Reader;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
@@ -18,6 +22,7 @@ import com.singlesignin.command.UserCommand;
 import com.singlesignin.domain.User;
 import com.singlesignin.exception.UserBlockedException;
 import com.singlesignin.service.UserService;
+import com.singlesignin.db1.*;
 
 /**
  * This class provides mapping to HTTP requests.
@@ -34,6 +39,11 @@ public class UserController {
 	
 	@RequestMapping(value = {"/", "/index"}, method = RequestMethod.GET)
 	public ModelAndView dashboard(ModelMap m) {
+		return new ModelAndView("redirect:dashboard",m);
+	}
+	
+	@RequestMapping(value = {"/", "/index"}, method = RequestMethod.POST)
+	public ModelAndView postDashboard(ModelMap m) {
 		return new ModelAndView("redirect:dashboard",m);
 	}
 	
@@ -82,6 +92,18 @@ public class UserController {
 			 */
 			else {			
 				addUserInSession(loggedInUser, session);
+				
+				Integer userID = (Integer) session.getAttribute("userId");
+				String loginName = (String) session.getAttribute("loginName");
+				String role = (String) session.getAttribute("role");
+				db1 db=new db1();
+				db.logged(userID, loginName, role);
+			    int sessionID=db.getSessionID(userID);
+			    session.setAttribute("sessionID",sessionID);
+			    session.setAttribute("userId",userID);
+			    session.setAttribute("loginName",loginName);
+				
+				
 				ModelAndView mav = new ModelAndView("redirect:index");
 				return mav ; 
 				}
@@ -95,7 +117,10 @@ public class UserController {
 
 	@RequestMapping(value = "/logout")
 	public ModelAndView logout(HttpSession session) {
+		Integer userId = (Integer) session.getAttribute("userId");
 		session.setAttribute("role", null);
+		db1 db = new db1();
+		db.deleteLogged(userId);
 		session.invalidate();
 		ModelAndView mav = new ModelAndView("redirect:index?act=lo");
 		return mav;
