@@ -11,7 +11,7 @@ import com.singlesignin.dao.BaseDAO;
 
 /**
  * @author Sanika Patil
- *
+ * This class provides service implementation to register the application.
  */
 
 @Service

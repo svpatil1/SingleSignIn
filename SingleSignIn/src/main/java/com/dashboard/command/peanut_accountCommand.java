@@ -1,5 +1,9 @@
 package com.dashboard.command;
-
+/**
+ * 
+ * @author sanika
+ * This class will give the available peanut information for the logged in user
+ */
 public class peanut_accountCommand {
 	public String available_peanuts;
 

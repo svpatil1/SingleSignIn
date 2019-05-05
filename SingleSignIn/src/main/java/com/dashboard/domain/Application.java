@@ -1,5 +1,11 @@
 package com.dashboard.domain;
 
+/**
+ * 
+ * @author sanika
+ * This will craete Application object
+ */
+
 public class Application {
 	private Integer app_id; //PK
 	private String name;

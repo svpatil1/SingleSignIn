@@ -13,10 +13,12 @@ import com.singlesignin.dao.BaseDAO;
 
 @Repository
 public class ApplicationDAOImpl extends BaseDAO implements ApplicationDAO {
-
+	
 	@Override
 	public Application save(Application a) {
-		
+		/**
+		 *  This will save the application information in database
+		 */
 		String name = a.getName();
 		Integer userId = a.getUserId();
 		String imageLocation = a.getImageLocation();

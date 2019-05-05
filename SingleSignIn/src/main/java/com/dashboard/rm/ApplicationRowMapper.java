@@ -5,6 +5,10 @@ import java.sql.SQLException;
 import org.springframework.jdbc.core.RowMapper;
 import com.dashboard.domain.Application;
 
+/**
+ * 
+ * It maps one database record to one domain (Application) object.
+ */
 
 public class ApplicationRowMapper implements RowMapper<Application> {
 

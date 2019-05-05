@@ -26,7 +26,7 @@ import com.singlesignin.sqlscript.runSqlScript;
 
 /**
  * @author Sanika Patil
- *
+ * This controller maps the requests related to upload functionality for ISV applications
  */
 @RestController
 public class ApplicationController {
@@ -96,18 +96,18 @@ public class ApplicationController {
 									
 									byte[] bytes = file.getBytes();
 					
-									// Creating the directory to store file
+									// Creating the root path to store war files and sql scripts
 									String rootPath =System.getProperty("catalina.base");
 									System.out.println(rootPath);
 									
-									File dirSql = new File("/tmp");
-									File dirWar = new File(rootPath + File.separator + "webapps");
+									File dirSql = new File("/tmp"); // directory to store sql script
+									File dirWar = new File(rootPath + File.separator + "webapps"); // directory to store war files
 									
 									System.out.println("Sql directory"+dirSql);
 									System.out.println("War directory"+dirWar);
 									
 					
-									// Create temporary sql file on server
+									// If the uploaded file is an sql script, store in directory created for sql script
 									if((file.getOriginalFilename().endsWith(".sql"))){
 											
 											File TempServerFile = new File(dirSql.getAbsolutePath()
@@ -146,7 +146,7 @@ public class ApplicationController {
 										
 									}
 									else {
-							
+										// If the uploaded file is an war file, store in directory created for war files
 											File TempServerFileWar = new File(dirWar
 													+ File.separator + file.getOriginalFilename());
 											System.out.println("War Temp server file: "+ TempServerFileWar );						
